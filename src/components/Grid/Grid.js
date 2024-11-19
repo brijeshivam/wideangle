@@ -77,11 +77,13 @@ class Grid extends Component {
 
     render() {
         const {images, hasMore, imageObject, isOpen, imageObjects, key} = this.state;
-        if(images.length === 0) return (
-            <div className={` my-1 p-1 fade-in absolute left-0 top-14 w-full justify-items-center`}>
-                <NotFound />
-            </div>
-        );
+        if(images.length === 0) {
+                return (
+                    <div className={` my-1 p-1 fade-in absolute left-0 top-14 w-full justify-items-center`}>
+                        <NotFound/>
+                    </div>
+                );
+        }
         return (
             <div className={` my-1 p-1 fade-in absolute left-0 top-14 w-full`}>
                 <ModalImage key={key} imageObject={imageObject} isOpen={isOpen}/>
