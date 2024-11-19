@@ -12,3 +12,7 @@
 .fade-in {
     animation: fadeIn 0.5s ease-in-out;
 }
+.center{
+    top: 42%;
+    right: 42%
+}
