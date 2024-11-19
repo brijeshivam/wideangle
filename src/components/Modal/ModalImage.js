@@ -1,5 +1,6 @@
 import {Component} from "react";
 import "./ModalImage.css";
+import Select from "react-dropdown-select";
 
 class ModalImage extends Component {
     constructor(props) {
@@ -7,8 +8,8 @@ class ModalImage extends Component {
         this.state = {
             src: props.imageObject ? props.imageObject.urls.regular : "",
             isOpen: props.isOpen,
-            visible: "hidden",
-            selectedSize:null
+            selectedSize: [],
+            imageObject: props.imageObject ? props.imageObject : "",
 
         };
     }
@@ -16,54 +17,68 @@ class ModalImage extends Component {
     onClose = () => {
         this.setState({isOpen: false});
     }
-    handleSubmit = (event) => {
-            event.preventDefault(); // Prevent default form submission behavior
-            if (this.state.selectedSize) {
-                // Open a new page with the selected car as a parameter
-                window.open(`${this.state.selectedSize}`, "_blank");
-            } else {
-                // alert("Please select a car!");
+    handleSubmit = async (event) => {
+        event.preventDefault(); // Prevent default form submission behavior
+        if (this.state.selectedSize[0]) {
+            try {
+                const response = await fetch(this.state.imageObject.urls[this.state.selectedSize[0].value], {mode: "cors"});
+                const blob = await response.blob();
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "image.jpg"; // Desired file name
+                link.click();
+                window.URL.revokeObjectURL(link.href); // Clean up the object URL
+            } catch (error) {
+                console.error("Error downloading the image:", error);
             }
-        };
+        }
+    };
 
-    handleChange = (event) => {
-            this.setState({selectedSize:event.target.value}); // Update state with selected value
-        };
+    handleChange = (values) => {
+        this.setState({selectedSize: values}); // Update state with selected value
+    };
+
+    options = [
+        {label: "1080p", value: "regular"},
+        {label: "400p", value: "small"},
+        {label: "200p", value: "thumb"},
+        {label: "Full", value: "full"},
+        {label: "Raw", value: "raw"},
+    ];
 
     render() {
-        const {isOpen, src} = this.state;
-        console.log("ModalImage", src);
+        const {isOpen, src, selectedSize} = this.state;
         if (!isOpen) return null;
+
         return (
             <div
                 className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
                 onClick={this.onClose}
             >
                 <div
-                    className="bg-white shadow-lg w-11/12 max-w-md p-10 relative fade-in"
+                    className="bg-white shadow-lg max-w-sm max-h-dvh bg-opacity-50 relative fade-in"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <button
-                        className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+                        className="absolute top-3 right-3 text-purple-900 hover:text-fuchsia-600 text-xl font-extrabold"
                         onClick={this.onClose}
-                    >&times;</button>
-                    <img src={src} alt="" className="p-12"/>
-                    <div className="justify-items-center ">
-                        <form onSubmit={this.handleSubmit} >
-                            <select name="size" id="size" onChange={this.handleChange} value={this.selectedSize} className="bg-purple-900 border-none text-white font-thin shadow-lg p-2">
-                                <option value="" className="font-thin">Choose Size</option>
-                                <option value={this.props.imageObject.urls.regular} className="font-thin">1080p</option>
-                                <option value={this.props.imageObject.urls.small} className="font-thin hover:bg-fuchsia-600">400p</option>
-                                <option value={this.props.imageObject.urls.thumb} className="font-thin hover:bg-fuchsia-600">200p</option>
-                                <option value={this.props.imageObject.urls.full} className="font-thin hover:bg-fuchsia-600">Full</option>
-                                <option value={this.props.imageObject.urls.raw} className="font-thin hover:bg-fuchsia-600">Raw</option>
-                            </select>
-                            <button type="submit" className="ml-2 bg-purple-900 text-white font-thin shadow-lg p-2 hover:bg-fuchsia-600">
-                                Download
-                            </button>
-                        </form>
-
+                    ><i className="fa fa-close"></i></button>
+                    <img src={src} alt="" className="max-h-dvh"/>
+                    <div className="absolute inline-flex bottom-2 right-2 bg-white text-fuchsia-800 font-thin">
+                        <Select
+                            options={this.options}
+                            onChange={this.handleChange}
+                            placeholder="Choose Size"
+                            dropdownPosition="top"
+                            color="#86198f"
+                            searchable={false}
+                            values={selectedSize}/>
+                        <button onClick={this.handleSubmit}
+                                className="bg-purple-900 text-white font-thin shadow-lg px-2 hover:bg-fuchsia-600">
+                            Download
+                        </button>
                     </div>
+
                 </div>
             </div>
         );
