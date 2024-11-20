@@ -16,7 +16,7 @@ class Grid extends Component {
             hasMore: true,
             page: this.props.page,
             isOpen: false,
-            imageObject: null,
+            index: null,
             imageObjects: [],
             currentLocation: this.props.location,
             key: 0
@@ -69,15 +69,15 @@ class Grid extends Component {
         this.fetchImages();
     }
 
-    openImage = (imageObj) => {
-        this.setState({imageObject: imageObj});
+    openImage = (index) => {
+        this.setState({index: index});
         this.setState({isOpen: true});
         this.setState((prev) => ({key: prev.key + 1}));
     }
 
     render() {
-        const {images, hasMore, imageObject, isOpen, imageObjects, key} = this.state;
-        if(images.length === 0) {
+        const {images, hasMore, index, isOpen, imageObjects, key} = this.state;
+        if(images.length === 0 && !hasMore) {
                 return (
                     <div className={` my-1 p-1 fade-in absolute left-0 top-14 w-full justify-items-center`}>
                         <NotFound/>
@@ -86,7 +86,7 @@ class Grid extends Component {
         }
         return (
             <div className={` my-1 p-1 fade-in absolute left-0 top-14 w-full`}>
-                <ModalImage key={key} imageObject={imageObject} isOpen={isOpen}/>
+                <ModalImage key={key} imageObjects={imageObjects} index={index} isOpen={isOpen} fetchImages={this.fetchImages} />
                 <InfiniteScroll
                     dataLength={images.length}
                     next={this.fetchImages}
@@ -97,11 +97,11 @@ class Grid extends Component {
                 >
                     <Masonry
                         breakpointCols={{
-                            default: 6,
-                            1200: 6,
-                            900: 5,
-                            750: 4,
-                            350: 3,
+                            default: 5,
+                            1200: 4,
+                            900: 3,
+                            750: 2,
+                            350: 1,
                         }}
                         className="my-masonry-grid bg-purple-900"
                         columnClassName="my-masonry-grid_column"
@@ -113,7 +113,7 @@ class Grid extends Component {
                                 alt={`${index + 1}`}
                                 className="masonry-image fade-in cursor-pointer transition-transform duration-300 hover:scale-110"
                                 loading="lazy"
-                                onClick={() => this.openImage(imageObjects[index])}
+                                onClick={() => this.openImage(index)}
                             />
                         ))}
                     </Masonry>
