@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import "./ModalImage.css";
 import Select from "react-dropdown-select";
 import Spinner from "../Spinner/Spinner";
@@ -76,6 +76,28 @@ const ModalImage = (props) => {
             setIsDownloading(false);
         }
     }
+
+    const shareImage = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Check this out!',
+                    text: 'Sharing an image.',
+                    url: src, // Image URL
+                });
+            } catch (error) {
+                console.log('Error sharing:', error);
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(src);
+                alert('Image link copied to clipboard!');
+            } catch (err) {
+                alert('Unable to share! Try browser\'s inbuilt share options.');
+            }
+        }
+    };
+
     if (!isOpen) return null;
 
     return (<>
@@ -89,6 +111,7 @@ const ModalImage = (props) => {
                 >
                     <img key={imgKey} src={src} alt="" className="max-h-dvh fade-in" {...swipeHandlers}
                          onLoad={() => setIsImageLoaded(true)}/>
+
                     {isImageLoaded && <div>
                         <div className="absolute inline-flex bottom-2 right-2 bg-white text-fuchsia-800 font-thin">
                             <Select
@@ -105,13 +128,17 @@ const ModalImage = (props) => {
                             </button>
                         </div>
                         <button
-                            className="absolute top-3 right-3 text-purple-900 hover:text-fuchsia-600 text-xl font-extrabold"
+                            className="absolute top-3 right-3 text-purple-700 hover:text-fuchsia-600 text-xl font-extrabold"
                             onClick={() => setIsOpen(false)}
                         ><i className="fa fa-close"></i></button>
-                        <i className="arrow right border-purple-900 hover:border-fuchsia-600 cursor-pointer"
+                        <i className="arrow right border-purple-700 hover:border-fuchsia-600 cursor-pointer"
                            onClick={loadNext}/>
-                        <i className="arrow left border-purple-900 hover:border-fuchsia-600 cursor-pointer"
+                        <i className="arrow left border-purple-700 hover:border-fuchsia-600 cursor-pointer"
                            onClick={loadPrev}/>
+                        <button
+                            className="absolute bottom-3 left-3 text-purple-700 hover:text-fuchsia-600 text-xl"
+                            onClick={() => shareImage()}
+                        ><i className="fa fa-share-alt"></i></button>
                     </div>}
 
                     {isDownloading && <div className="absolute center"><Spinner/></div>}
