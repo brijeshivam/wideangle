@@ -30,9 +30,13 @@ const Sidebar = () => {
     const [visible, setVisible] = useState(null);
     const navigate = useNavigate(); // Get the navigate function
 
-    const handleNavigation = (query) => {
+    const handleNavigation = (e, query) => {
         navigate(`/?query=${query}`); // Change the route programmatically
-        console.log(query);
+        if (window.debounceTimer) clearTimeout(window.debounceTimer);
+        window.debounceTimer = setTimeout(() => {
+            setVisible(null);
+            e.target.blur();
+        }, 1000);
     };
     return (
 
@@ -40,7 +44,7 @@ const Sidebar = () => {
             {buttons.map((button, index) => (
                 <div key={index}>
                     <button
-                        onClick={()=>handleNavigation(button.tooltip)}
+                        onClick={(e)=>handleNavigation(e,button.tooltip)}
                         onMouseEnter={() => setVisible(index)}
                         onMouseLeave={() => setVisible(null)}
                         className="p-2 hover:bg-fuchsia-600 inline-block bg-purple-950 w-auto bg-opacity-80 transition-transform duration-200 hover:scale-125"

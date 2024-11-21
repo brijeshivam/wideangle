@@ -35,27 +35,32 @@ const Navbar = () => {
             navigate(`/?query=${query}`); // Change the route programmatically
         }, 1000);
     };
-
+    const onEnter = (e) => {
+        if (e.key === "Enter") {
+            e.target.blur();
+        }
+    };
     return (
         <>
             <nav className={`py-2 ${bgDark} ${textDark} w-full font-light fixed z-10`}>
                 <div className="container mx-auto flex justify-between">
                     <div className=" text-2xl mx-1 font-thin cursor-pointer inline-flex" onClick={() => navigate("/")}>
-                        <img src="/logo.png" alt="logo" className="w-7 h-7 my-auto" />
-                        <span className="tracking-widest ml-1">Wide</span><span className="tracking-tighter">Angle</span>
+                        <img src="/logo.png" alt="logo" className="w-7 h-7 ml-5" />
+                        <span className="w-1/3 hidden sm:flex"><span className="tracking-widest ml-1">Wide</span><span className="tracking-tighter">Angle</span></span>
                     </div>
 
                     {/*search button*/}
-                    <div className={`w-1/3 hidden md:flex`}>
+                    <div className={`w-1/2`}>
                         <form className="w-full inline-flex justify-center">
                             <input onChange={handleChange}
                                    type="text"
                                    placeholder="Search..."
-                                   className={`px-4 py-1 w-4/5 justify-self-center focus:outline-none ${bgDark2} ${textGrey}`}
+                                   onKeyDown={onEnter}
+                                   className={`px-4 py-1 w-5/6 justify-self-center focus:outline-none ${bgDark2} ${textGrey}`}
                             />
                             <button onClick={handleSubmit}
-                                    className={`${btnDark} text-white px-4 py-1 ${btnHover}`}>
-                                <i className="fa fa-search"></i>
+                                    className={`${btnDark} text-white px-4 py-1 ${btnHover} `}>
+                                <i className="fa fa-search "></i>
                             </button>
                         </form>
                     </div>
@@ -88,20 +93,6 @@ const Navbar = () => {
                     <div className="md:hidden mt-4 space-y-2 mx-3 tracking-widest">
                         <Link to="/" className={`block px-2 py-1 ${btnHover}`}>Home</Link>
                         <Link to="/about-us" className={`block px-2 py-1 ${btnHover}`}>About Us</Link>
-
-                        {/*search button*/}
-                        <div className={`flex items-center rounded-md mt-2`}>
-
-                            <input onChange={handleChange}
-                                type="text"
-                                placeholder="Search..."
-                                className={`px-4 py-2 w-full focus:outline-none ${bgDark2} ${textGrey}`}
-                            />
-                            <button onClick={toggleMobileMenu}
-                                className={`${btnDark} ${textDark} px-4 py-2 cursor-pointer ${btnHover} `}>
-                                <i className="fa fa-search"></i>
-                            </button>
-                        </div>
                     </div>
                 )}
             </nav>

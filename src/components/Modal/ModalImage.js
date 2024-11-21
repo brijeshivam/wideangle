@@ -23,7 +23,7 @@ const ModalImage = (props) => {
                 const blob = await response.blob();
                 const link = document.createElement("a");
                 link.href = window.URL.createObjectURL(blob);
-                link.download = "image.jpg";
+                link.download = `${imageObject.slug}-${selectedSize[0].value}.jpg`;
                 link.click();
                 window.URL.revokeObjectURL(link.href); // Clean up the object URL
                 setIsDownloading(false);
