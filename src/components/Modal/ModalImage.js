@@ -82,7 +82,7 @@ const ModalImage = (props) => {
             try {
                 await navigator.share({
                     title: 'Check this out!',
-                    text: 'Check this out!',
+                    text: 'Check this out! \n',
                     url: src, // Image URL
                 });
             } catch (error) {
